@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shelil1's World</title>
+    <title>匿名樹洞 🌸</title>
     <style>
         body { 
             margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; 
@@ -15,34 +15,30 @@
             padding: 3rem; border-radius: 40px; text-align: center;
             box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.5);
+            max-width: 350px;
         }
-        h1 { color: #ff8fab; margin-bottom: 20px; }
+        h1 { color: #ff8fab; font-size: 1.8rem; }
+        p { color: #8b5e66; line-height: 1.6; margin-bottom: 25px; }
         
-        /* 這是那個可以點的按鈕 */
-        .magic-button {
-            background: #ff8fab; color: white; border: none;
-            padding: 15px 30px; border-radius: 25px; font-size: 1.1rem;
-            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 5px 15px rgba(255, 143, 171, 0.4);
+        .submit-btn {
+            display: inline-block;
+            background: #ff8fab; color: white; text-decoration: none;
+            padding: 15px 40px; border-radius: 30px; font-weight: bold;
+            transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 143, 171, 0.4);
         }
-        .magic-button:active { transform: scale(0.95); }
+        .submit-btn:hover { background: #ff7597; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>🌸 Shelil1</h1>
-        <p>點擊下方的按鈕看看吧！</p>
-        <br>
-        <button class="magic-button" onclick="showSurprise()">點開驚喜 ✨</button>
+        <h1>🌙 匿名樹洞</h1>
+        <p>在這裡，你可以安全地放下所有情緒。<br>沒人知道你是誰，儘管說吧。</p>
+        
+        <a href="你的Google表單網址" class="submit-btn">點我匿名投遞 ✉️</a>
+        
+        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">所有的秘密都會被溫柔對待</p>
     </div>
-
-    <script>
-        // 這是讓網頁「動起來」的魔法 (JavaScript)
-        function showSurprise() {
-            alert("✨ 恭喜你發現了驚喜！\n\n這是你的專屬網頁空間，\n想寫什麼都可以喔！💗");
-        }
-    </script>
 
 </body>
 </html>
