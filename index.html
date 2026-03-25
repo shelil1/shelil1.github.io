@@ -5,72 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AI 情感樹洞 🌸</title>
     <style>
-        body { margin: 0; padding: 20px; min-height: 100vh; background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); font-family: sans-serif; display: flex; align-items: center; justify-content: center; }
-        .container { width: 95%; max-width: 420px; background: rgba(255, 255, 255, 0.85); padding: 30px; border-radius: 30px; text-align: center; box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3); backdrop-filter: blur(10px); border: 1px solid white; }
-        h1 { color: #ff8fab; margin-bottom: 20px; font-size: 1.6rem; }
-        textarea { width: 100%; height: 120px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #ffd1dc; padding: 15px; box-sizing: border-box; outline: none; font-size: 1rem; color: #8b5e66; resize: none; background: white; }
-        button { background: #ff8fab; color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; }
-        button:disabled { background: #ffc2d1; cursor: not-allowed; }
-        #response { margin-top: 25px; text-align: left; color: #8b5e66; background: white; padding: 15px; border-radius: 15px; display: none; border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05); line-height: 1.6; }
+        body { 
+            margin: 0; padding: 20px; min-height: 100vh;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .container {
+            width: 90%; max-width: 450px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 30px; border: 1px solid white;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3);
+            text-align: center;
+        }
+        h1 { color: #ff8fab; font-size: 1.6rem; margin-bottom: 20px; }
+        textarea {
+            width: 100%; height: 120px; border: 2px solid #ffd1dc;
+            border-radius: 15px; padding: 15px; font-size: 1rem;
+            margin-bottom: 15px; outline: none; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.5); color: #8b5e66; resize: none;
+        }
+        button {
+            background: #ff8fab; color: white; border: none;
+            padding: 12px 30px; border-radius: 25px; font-weight: bold;
+            cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
+        }
+        button:hover { background: #ff7597; transform: translateY(-2px); }
+        #response {
+            margin-top: 25px; padding: 15px; border-radius: 15px;
+            background: white; color: #8b5e66; text-align: left;
+            font-size: 0.95rem; line-height: 1.6; display: none;
+            border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🌸 匿名 AI 樹洞</h1>
-        <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">寫下心事，AI 會在這裡陪著你。</p>
+        <h1>🌸 匿名情感樹洞</h1>
+        <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">這裡是妳專屬的空間，寫下任何心事吧。</p>
+        
         <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
-        <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
+        <button id="sendBtn" onclick="sendToHole()">傳送給樹洞 ✨</button>
+        
         <div id="response"></div>
     </div>
 
     <script>
-    async function askAI() {
-        const input = document.getElementById('userInput');
-        const btn = document.getElementById('sendBtn');
-        const respDiv = document.getElementById('response');
-        
-        // 妳的 Tier 1 正確 Key
-        const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs";
+        // 預設的暖心回覆資料庫
+        const healingMessages = [
+            "辛苦了，妳已經做得很棒了。抱一個吧！🌸",
+            "不管今天發生什麼事，妳都值得被溫柔對待。",
+            "有些時候，停下來休息一下也沒關係的，妳不孤單。",
+            "樹洞收到了妳的情緒，它們在這裡很安全，妳可以安心放下囉。",
+            "即使是很微小的進步，也值得為自己感到驕傲。✨",
+            "明天的太陽會升起，壞心情也會跟著雲朵飄散的。",
+            "妳不需要隨時都表現得很完美，真實的妳就很迷人。",
+            "深呼吸，感受當下的平靜，這世界還有一角在默默愛著妳。",
+            "把烦惱留給樹洞，明天醒來又是新的一頁。🍂",
+            "聽見妳的心聲了，願這點微光能帶給妳一點點安慰。"
+        ];
 
-        if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
-
-        btn.disabled = true;
-        btn.innerText = "正在傾聽...";
-        respDiv.style.display = "block";
-        respDiv.innerText = "（正在溫柔地思考回覆...）";
-
-        try {
-            // 【終極網址修正】針對 Tier 1 帳戶，使用 v1 版本並加上正確的模型全名
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        function sendToHole() {
+            const input = document.getElementById('userInput');
+            const respDiv = document.getElementById('response');
             
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ 
-                        parts: [{ text: "你是一個溫柔的傾聽者，請用繁體中文回覆這段心事，大約 60 字內，語氣要溫暖且有同理心：" + input.value }] 
-                    }]
-                })
-            });
-
-            const data = await response.json();
-            
-            if (data.candidates && data.candidates[0].content) {
-                respDiv.innerText = data.candidates[0].content.parts[0].text;
-                input.value = ""; 
-            } else {
-                // 如果失敗，清楚顯示 Google 的回報，幫助我們判斷
-                const msg = data.error ? (data.error.status + ": " + data.error.message) : "暫時無法讀取回覆";
-                respDiv.innerText = "樹洞通知：\n" + msg;
+            if (!input.value.trim()) {
+                alert("請寫點東西吧！");
+                return;
             }
-        } catch (error) {
-            respDiv.innerText = "網路連線失敗，請檢查網路連線。";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "再傳送一段話 ✨";
+
+            // 模擬思考的感覺
+            respDiv.style.display = "block";
+            respDiv.innerText = "（樹洞正在靜靜傾聽...）";
+
+            setTimeout(() => {
+                // 隨機挑選一句話
+                const randomIndex = Math.floor(Math.random() * healingMessages.length);
+                const reply = healingMessages[randomIndex];
+                
+                respDiv.innerText = reply;
+                input.value = ""; // 清空輸入框
+            }, 800); // 延遲 0.8 秒增加真實感
         }
-    }
     </script>
 </body>
 </html>
