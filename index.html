@@ -23,16 +23,14 @@
             width: 100%; height: 120px; border: 2px solid #ffd1dc;
             border-radius: 15px; padding: 15px; font-size: 1rem;
             margin-bottom: 15px; outline: none; box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.5); color: #8b5e66;
-            resize: none;
+            background: rgba(255, 255, 255, 0.5); color: #8b5e66; resize: none;
         }
         button {
             background: #ff8fab; color: white; border: none;
             padding: 12px 30px; border-radius: 25px; font-weight: bold;
             cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(255, 143, 171, 0.3);
         }
-        button:disabled { background: #ffc2d1; cursor: not-allowed; box-shadow: none; }
+        button:disabled { background: #ffc2d1; cursor: not-allowed; }
         #response {
             margin-top: 25px; padding: 15px; border-radius: 15px;
             background: white; color: #8b5e66; text-align: left;
@@ -47,68 +45,50 @@
     <div class="container">
         <h1>🌸 匿名 AI 樹洞</h1>
         <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">寫下心事，AI 會在這裡陪著你。</p>
-        
         <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
         <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
-        
         <div id="response"></div>
     </div>
 
     <script>
-    // 這是你的 API Key
     const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs"; 
 
     async function askAI() {
         const input = document.getElementById('userInput');
         const btn = document.getElementById('sendBtn');
         const respDiv = document.getElementById('response');
-        
         const userText = input.value.trim();
-        if (!userText) {
-            alert("請寫點東西吧！");
-            return;
-        }
+        
+        if (!userText) { alert("請寫點東西吧！"); return; }
 
-        // 介面進入「思考中」狀態
         btn.disabled = true;
         btn.innerText = "AI 正在傾聽...";
         respDiv.style.display = "block";
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            // 修正後的 API 網址，使用 v1 版本以支援 gemini-1.5-flash
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // 切換回 v1beta + gemini-pro，這是目前相容性最高的組合
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ 
-                        parts: [{ 
-                            text: "你是一個溫柔的情緒療癒導師，請針對以下這段話提供一段約 60 字內的繁體中文回覆，語氣要溫暖、富有同理心：" + userText 
-                        }] 
-                    }]
+                    contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 60 字內，並使用繁體中文：" + userText }] }]
                 })
             });
 
             const data = await response.json();
             
-            // 檢查 API 是否成功回傳內容
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                const aiReply = data.candidates[0].content.parts[0].text;
-                respDiv.innerText = aiReply;
-                input.value = ""; // 清空輸入框
+            if (data.candidates && data.candidates[0].content) {
+                respDiv.innerText = data.candidates[0].content.parts[0].text;
+                input.value = ""; 
             } else {
-                // 顯示 API 回傳的具體錯誤，方便除錯
-                const errMsg = data.error ? data.error.message : "未知的資料錯誤";
-                respDiv.innerText = "樹洞暫時出了點小狀況... \n錯誤訊息：" + errMsg;
+                respDiv.innerText = "連線成功但 AI 沒有回話。詳細原因：" + JSON.stringify(data.error || "模型不支援或地區限制");
             }
         } catch (error) {
-            // 網路連線或語法錯誤
-            respDiv.innerText = "連線失敗，請稍後再試。";
-            alert("發生了點問題：" + error.message);
+            respDiv.innerText = "連線失敗：" + error.message;
         } finally {
-            // 恢復按鈕功能
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
         }
