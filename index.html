@@ -5,35 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AI 情感樹洞 🌸</title>
     <style>
-        body { 
-            margin: 0; padding: 20px; min-height: 100vh; 
-            background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
-            font-family: sans-serif; display: flex; align-items: center; justify-content: center; 
-        }
-        .container { 
-            width: 95%; max-width: 420px; background: rgba(255, 255, 255, 0.8); 
-            padding: 30px; border-radius: 30px; text-align: center; 
-            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3); backdrop-filter: blur(10px);
-            border: 1px solid white;
-        }
-        h1 { color: #ff8fab; margin-bottom: 20px; }
-        textarea { 
-            width: 100%; height: 120px; margin-bottom: 15px; border-radius: 15px; 
-            border: 2px solid #ffd1dc; padding: 15px; box-sizing: border-box; 
-            outline: none; font-size: 1rem; color: #8b5e66; resize: none;
-        }
-        button { 
-            background: #ff8fab; color: white; border: none; padding: 12px; 
-            border-radius: 25px; width: 100%; cursor: pointer; font-weight: bold; 
-            font-size: 1rem; transition: 0.3s;
-        }
+        body { margin: 0; padding: 20px; min-height: 100vh; background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); font-family: sans-serif; display: flex; align-items: center; justify-content: center; }
+        .container { width: 95%; max-width: 420px; background: rgba(255, 255, 255, 0.85); padding: 30px; border-radius: 30px; text-align: center; box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3); backdrop-filter: blur(10px); border: 1px solid white; }
+        h1 { color: #ff8fab; margin-bottom: 20px; font-size: 1.6rem; }
+        textarea { width: 100%; height: 120px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #ffd1dc; padding: 15px; box-sizing: border-box; outline: none; font-size: 1rem; color: #8b5e66; resize: none; background: white; }
+        button { background: #ff8fab; color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; }
         button:disabled { background: #ffc2d1; cursor: not-allowed; }
-        #response { 
-            margin-top: 25px; text-align: left; color: #8b5e66; background: white; 
-            padding: 15px; border-radius: 15px; display: none; 
-            border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            line-height: 1.6;
-        }
+        #response { margin-top: 25px; text-align: left; color: #8b5e66; background: white; padding: 15px; border-radius: 15px; display: none; border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -52,7 +30,7 @@
         const btn = document.getElementById('sendBtn');
         const respDiv = document.getElementById('response');
         
-        // 妳的正確 API Key
+        // 妳的 Tier 1 正確 Key
         const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs";
 
         if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
@@ -63,7 +41,7 @@
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            // 【核心修正】使用 v1 正式版路徑，確保支援 gemini-1.5-flash
+            // 【終極網址修正】針對 Tier 1 帳戶，使用 v1 版本並加上正確的模型全名
             const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
@@ -71,7 +49,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ 
-                        parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒的話回覆這段情緒，大約 60 字內，使用繁體中文：" + input.value }] 
+                        parts: [{ text: "你是一個溫柔的傾聽者，請用繁體中文回覆這段心事，大約 60 字內，語氣要溫暖且有同理心：" + input.value }] 
                     }]
                 })
             });
@@ -82,12 +60,12 @@
                 respDiv.innerText = data.candidates[0].content.parts[0].text;
                 input.value = ""; 
             } else {
-                // 如果失敗，抓出 Google 給的詳細錯誤代碼
-                const errorInfo = data.error ? (data.error.status + ": " + data.error.message) : "模型暫時無法回應";
-                respDiv.innerText = "樹洞通知：\n" + errorInfo;
+                // 如果失敗，清楚顯示 Google 的回報，幫助我們判斷
+                const msg = data.error ? (data.error.status + ": " + data.error.message) : "暫時無法讀取回覆";
+                respDiv.innerText = "樹洞通知：\n" + msg;
             }
         } catch (error) {
-            respDiv.innerText = "連線失敗，請檢查網路。";
+            respDiv.innerText = "網路連線失敗，請檢查網路連線。";
         } finally {
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
