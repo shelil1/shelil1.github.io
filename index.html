@@ -3,42 +3,56 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>匿名樹洞 🌸</title>
+    <title>匿名抒發空間 🌸</title>
     <style>
         body { 
-            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; 
+            margin: 0; padding: 20px; min-height: 100vh;
             background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
             font-family: -apple-system, sans-serif;
+            display: flex; flex-direction: column; align-items: center;
         }
-        .card { 
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            padding: 3rem; border-radius: 40px; text-align: center;
-            box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            max-width: 350px;
+        .header { 
+            text-align: center; margin-bottom: 30px; padding: 20px;
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(5px);
+            border-radius: 20px; width: 100%; max-width: 500px;
         }
-        h1 { color: #ff8fab; font-size: 1.8rem; }
-        p { color: #8b5e66; line-height: 1.6; margin-bottom: 25px; }
-        
-        .submit-btn {
-            display: inline-block;
-            background: #ff8fab; color: white; text-decoration: none;
-            padding: 15px 40px; border-radius: 30px; font-weight: bold;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 143, 171, 0.4);
+        h1 { color: #ff8fab; margin: 0; font-size: 1.5rem; }
+        p { color: #8b5e66; font-size: 0.9rem; }
+
+        /* 留言板容器 */
+        .comment-box {
+            width: 100%; max-width: 600px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.2);
         }
-        .submit-btn:hover { background: #ff7597; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>🌙 匿名樹洞</h1>
-        <p>在這裡，你可以安全地放下所有情緒。<br>沒人知道你是誰，儘管說吧。</p>
-        
-        <a href="你的Google表單網址" class="submit-btn">點我匿名投遞 ✉️</a>
-        
-        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">所有的秘密都會被溫柔對待</p>
+    <div class="header">
+        <h1>🌸 匿名樹洞</h1>
+        <p>在這裡寫下你的心情，沒人知道你是誰。</p>
     </div>
+
+    <div class="comment-box">
+        <div id="disqus_thread"></div>
+        <script>
+            var disqus_config = function () {
+                this.page.url = window.location.href;
+                this.page.identifier = 'shelil1_secret_hole'; 
+            };
+            (function() { 
+                var d = document, s = d.createElement('script');
+                s.src = 'https://short-comments.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    </div>
+
+    <p style="margin-top: 30px; color: #ff8fab; font-size: 0.8rem;">✨ 溫柔對待每一個情緒</p>
 
 </body>
 </html>
+
