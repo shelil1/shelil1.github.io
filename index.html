@@ -24,18 +24,21 @@
             border-radius: 15px; padding: 15px; font-size: 1rem;
             margin-bottom: 15px; outline: none; box-sizing: border-box;
             background: rgba(255, 255, 255, 0.5); color: #8b5e66;
+            resize: none;
         }
         button {
             background: #ff8fab; color: white; border: none;
             padding: 12px 30px; border-radius: 25px; font-weight: bold;
             cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(255, 143, 171, 0.3);
         }
-        button:disabled { background: #ffc2d1; cursor: not-allowed; }
+        button:disabled { background: #ffc2d1; cursor: not-allowed; box-shadow: none; }
         #response {
             margin-top: 25px; padding: 15px; border-radius: 15px;
             background: white; color: #8b5e66; text-align: left;
             font-size: 0.95rem; line-height: 1.6; display: none;
             border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -52,7 +55,7 @@
     </div>
 
     <script>
-    // 你的 API Key
+    // 這是你的 API Key
     const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs"; 
 
     async function askAI() {
@@ -66,14 +69,15 @@
             return;
         }
 
-        // 鎖定按鈕，防止重複點擊
+        // 介面進入「思考中」狀態
         btn.disabled = true;
         btn.innerText = "AI 正在傾聽...";
         respDiv.style.display = "block";
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+            // 修正後的 API 網址，使用 v1 版本以支援 gemini-1.5-flash
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -81,7 +85,7 @@
                 body: JSON.stringify({
                     contents: [{ 
                         parts: [{ 
-                            text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 60 字內，並使用繁體中文：" + userText 
+                            text: "你是一個溫柔的情緒療癒導師，請針對以下這段話提供一段約 60 字內的繁體中文回覆，語氣要溫暖、富有同理心：" + userText 
                         }] 
                     }]
                 })
@@ -89,20 +93,22 @@
 
             const data = await response.json();
             
+            // 檢查 API 是否成功回傳內容
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                respDiv.innerText = data.candidates[0].content.parts[0].text;
-                input.value = ""; 
+                const aiReply = data.candidates[0].content.parts[0].text;
+                respDiv.innerText = aiReply;
+                input.value = ""; // 清空輸入框
             } else {
-                // 這裡會抓出具體的 API 錯誤訊息
-                const errorInfo = data.error ? data.error.message : "未知錯誤";
-                respDiv.innerText = "樹洞暫時收不到訊號。錯誤原因：" + errorInfo;
+                // 顯示 API 回傳的具體錯誤，方便除錯
+                const errMsg = data.error ? data.error.message : "未知的資料錯誤";
+                respDiv.innerText = "樹洞暫時出了點小狀況... \n錯誤訊息：" + errMsg;
             }
         } catch (error) {
-            // 抓出網路連線錯誤
-            respDiv.innerText = "連線失敗，請檢查網路或 Key 權限。";
-            alert("錯誤詳細資訊：" + error.message);
+            // 網路連線或語法錯誤
+            respDiv.innerText = "連線失敗，請稍後再試。";
+            alert("發生了點問題：" + error.message);
         } finally {
-            // 恢復按鈕狀態
+            // 恢復按鈕功能
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
         }
