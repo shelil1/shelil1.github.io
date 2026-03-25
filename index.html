@@ -3,59 +3,46 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shelil1's Pink World</title>
+    <title>Shelil1's World</title>
     <style>
-        /* 全螢幕背景：使用淡粉色漸層 */
         body { 
-            margin: 0; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; 
             background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
-            font-family: -apple-system, "Helvetica Neue", sans-serif;
-            color: #8b5e66;
+            font-family: -apple-system, sans-serif;
         }
-
-        /* 中央白色卡片：帶有淡淡的透明感 */
         .card { 
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(10px); /* 蘋果風格的模糊效果 */
-            padding: 3rem; 
-            border-radius: 40px; 
-            box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3); 
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            max-width: 80%;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            padding: 3rem; border-radius: 40px; text-align: center;
+            box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
-
-        h1 { 
-            font-size: 2.5rem; 
-            margin-bottom: 10px; 
-            letter-spacing: 2px;
-            color: #ff8fab;
+        h1 { color: #ff8fab; margin-bottom: 20px; }
+        
+        /* 這是那個可以點的按鈕 */
+        .magic-button {
+            background: #ff8fab; color: white; border: none;
+            padding: 15px 30px; border-radius: 25px; font-size: 1.1rem;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 143, 171, 0.4);
         }
-
-        p { 
-            font-size: 1.1rem; 
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-
-        .heart {
-            color: #ff8fab;
-            font-size: 2rem;
-            margin-top: 15px;
-            display: block;
-        }
+        .magic-button:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
+
     <div class="card">
         <h1>🌸 Shelil1</h1>
-        <p>歡迎來到我的淡粉色空間</p>
-        <p>這是我在 iPad 上親手設計的網頁</p>
-        <span class="heart">♥</span>
+        <p>點擊下方的按鈕看看吧！</p>
+        <br>
+        <button class="magic-button" onclick="showSurprise()">點開驚喜 ✨</button>
     </div>
+
+    <script>
+        // 這是讓網頁「動起來」的魔法 (JavaScript)
+        function showSurprise() {
+            alert("✨ 恭喜你發現了驚喜！\n\n這是你的專屬網頁空間，\n想寫什麼都可以喔！💗");
+        }
+    </script>
+
 </body>
 </html>
