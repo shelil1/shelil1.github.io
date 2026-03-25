@@ -1,56 +1,5 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI 情感樹洞 🌸</title>
-    <style>
-        body { 
-            margin: 0; padding: 20px; min-height: 100vh;
-            background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
-            font-family: -apple-system, sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .container {
-            width: 90%; max-width: 450px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 30px; border: 1px solid white;
-            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3);
-            text-align: center;
-        }
-        h1 { color: #ff8fab; font-size: 1.6rem; margin-bottom: 20px; }
-        textarea {
-            width: 100%; height: 120px; border: 2px solid #ffd1dc;
-            border-radius: 15px; padding: 15px; font-size: 1rem;
-            margin-bottom: 15px; outline: none; box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.5); color: #8b5e66; resize: none;
-        }
-        button {
-            background: #ff8fab; color: white; border: none;
-            padding: 12px 30px; border-radius: 25px; font-weight: bold;
-            cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
-        }
-        button:disabled { background: #ffc2d1; cursor: not-allowed; }
-        #response {
-            margin-top: 25px; padding: 15px; border-radius: 15px;
-            background: white; color: #8b5e66; text-align: left;
-            font-size: 0.95rem; line-height: 1.6; display: none;
-            border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            white-space: pre-wrap;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>🌸 匿名 AI 樹洞</h1>
-        <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">寫下心事，AI 會在這裡陪著你。</p>
-        <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
-        <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
-        <div id="response"></div>
-    </div>
-
-    <script>
+<script>
+    // 你的 API Key
     const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs"; 
 
     async function askAI() {
@@ -67,8 +16,8 @@
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            // 切換回 v1beta + gemini-pro，這是目前相容性最高的組合
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+            // 這是目前最正確、最官方的模型路徑
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -84,7 +33,9 @@
                 respDiv.innerText = data.candidates[0].content.parts[0].text;
                 input.value = ""; 
             } else {
-                respDiv.innerText = "連線成功但 AI 沒有回話。詳細原因：" + JSON.stringify(data.error || "模型不支援或地區限制");
+                // 如果還是失敗，直接顯示完整錯誤，我來幫你判斷
+                respDiv.innerText = "抱歉，樹洞遇到了點小麻煩。原因：" + (data.error ? data.error.message : "請檢查 Key 狀態");
+                console.log(data);
             }
         } catch (error) {
             respDiv.innerText = "連線失敗：" + error.message;
@@ -93,6 +44,4 @@
             btn.innerText = "再傳送一段話 ✨";
         }
     }
-    </script>
-</body>
-</html>
+</script>
