@@ -1,98 +1,100 @@
-<script>
-    // 請確保這裡的引號是英文直直的 "
-    const API_KEY = "AIzaSyDQE5CrgAECK_HreQaQPpTexrQAIDmyqmw"; 
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI 情感樹洞 🌸</title>
+    <style>
+        body { 
+            margin: 0; padding: 20px; min-height: 100vh;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
+            font-family: -apple-system, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .container {
+            width: 90%; max-width: 450px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 30px; border: 1px solid white;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3);
+            text-align: center;
+        }
+        h1 { color: #ff8fab; font-size: 1.6rem; margin-bottom: 20px; }
+        textarea {
+            width: 100%; height: 120px; border: 2px solid #ffd1dc;
+            border-radius: 15px; padding: 15px; font-size: 1rem;
+            margin-bottom: 15px; outline: none; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.5); color: #8b5e66;
+        }
+        button {
+            background: #ff8fab; color: white; border: none;
+            padding: 12px 30px; border-radius: 25px; font-weight: bold;
+            cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
+        }
+        button:disabled { background: #ffc2d1; cursor: not-allowed; }
+        #response {
+            margin-top: 25px; padding: 15px; border-radius: 15px;
+            background: white; color: #8b5e66; text-align: left;
+            font-size: 0.95rem; line-height: 1.6; display: none;
+            border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
 
-    async function askAI() {
-        const input = document.getElementById('userInput');
-        const btn = document.getElementById('sendBtn');
-        const respDiv = document.getElementById('response');
+    <div class="container">
+        <h1>🌸 匿名 AI 樹洞</h1>
+        <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">寫下心事，AI 會在這裡陪著你。</p>
         
-        // 1. 檢查有沒有輸入文字
-        if (!input.value.trim()) {
-            alert("請寫點東西吧！");
-            return;
-        }
-
-        // 2. 顯示正在載入的狀態
-        btn.disabled = true;
-        btn.innerText = "AI 正在傾聽...";
-        respDiv.style.display = "block";
-        respDiv.innerText = "（正在溫柔地思考回覆...）";
-
-        try {
-            // 3. 呼叫 Google AI
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 50 字內，並使用繁體中文：" + input.value }] }]
-                })
-            });
-
-            const data = await response.json();
-            
-            // 4. 檢查 AI 是否有成功回傳
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                const aiText = data.candidates[0].content.parts[0].text;
-                respDiv.innerText = aiText;
-                input.value = ""; // 成功後清空輸入框
-            } else {
-                respDiv.innerText = "樹洞收訊不好，請再試一次。";
-            }
-        } catch (error) {
-            console.error(error);
-            respDiv.innerText = "連線失敗，請檢查 API Key 或網路。";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "再傳送一段話 ✨";
-        }
-<script>
-    // 請確保這裡的引號是英文直直的 "
-    const API_KEY = "AIzaSyDQE5CrgAECK_HreQaQPpTexrQAIDmyqmw"; 
-
-    async function askAI() {
-        const input = document.getElementById('userInput');
-        const btn = document.getElementById('sendBtn');
-        const respDiv = document.getElementById('response');
+        <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
+        <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
         
-        // 1. 檢查有沒有輸入文字
-        if (!input.value.trim()) {
-            alert("請寫點東西吧！");
-            return;
-        }
+        <div id="response"></div>
+    </div>
 
-        // 2. 顯示正在載入的狀態
-        btn.disabled = true;
-        btn.innerText = "AI 正在傾聽...";
-        respDiv.style.display = "block";
-        respDiv.innerText = "（正在溫柔地思考回覆...）";
+    <script>
+        // 關鍵：請確保 API_KEY 的引號是直的 "
+        const API_KEY = "AIzaSyDQE5CrgAECK_HreQaQPpTexrQAIDmyqmw"; 
 
-        try {
-            // 3. 呼叫 Google AI
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 50 字內，並使用繁體中文：" + input.value }] }]
-                })
-            });
-
-            const data = await response.json();
+        async function askAI() {
+            const input = document.getElementById('userInput');
+            const btn = document.getElementById('sendBtn');
+            const respDiv = document.getElementById('response');
             
-            // 4. 檢查 AI 是否有成功回傳
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                const aiText = data.candidates[0].content.parts[0].text;
-                respDiv.innerText = aiText;
-                input.value = ""; // 成功後清空輸入框
-            } else {
-                respDiv.innerText = "樹洞收訊不好，請再試一次。";
+            if (!input.value.trim()) {
+                alert("請寫點東西吧！");
+                return;
             }
-        } catch (error) {
-            console.error(error);
-            respDiv.innerText = "連線失敗，請檢查 API Key 或網路。";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "再傳送一段話 ✨";
+
+            btn.disabled = true;
+            btn.innerText = "AI 正在傾聽...";
+            respDiv.style.display = "block";
+            respDiv.innerText = "（正在溫柔地思考回覆...）";
+
+            try {
+                const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 60 字內，並使用繁體中文：" + input.value }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    respDiv.innerText = data.candidates[0].content.parts[0].text;
+                    input.value = ""; 
+                } else {
+                    respDiv.innerText = "樹洞暫時收不到訊號，請檢查 Key 是否正確。";
+                }
+            } catch (error) {
+                respDiv.innerText = "連線失敗了，請稍後再試。";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "再傳送一段話 ✨";
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>
