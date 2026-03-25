@@ -87,11 +87,13 @@
             } else {
                 respDiv.innerText = "樹洞暫時收不到訊號，可能是 Key 的權限問題。";
             }
-        } catch (error) {
-    // 這會直接把錯誤原因彈出來給你看
-    alert("發生錯誤了！原因：" + error.message);
-    console.error(error);
-}
+    } catch (error) {
+        alert("發生錯誤了！原因：" + error.message);
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "再傳送一段話 ✨";
+    }
         } finally {
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
