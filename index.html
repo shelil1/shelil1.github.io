@@ -52,41 +52,48 @@
     </div>
 
     <script>
-        // 關鍵：請確保 API_KEY 的引號是直的 "
-        const API_KEY = "AIzaSyDQE5CrgAECK_HreQaQPpTexrQAIDmyqmw"; 
+    const API_KEY = "AIzaSyDQE5CrgAECK_HreQaQPpTexrQAIDmyqmw"; 
 
-        async function askAI() {
-            const input = document.getElementById('userInput');
-            const btn = document.getElementById('sendBtn');
-            const respDiv = document.getElementById('response');
+    async function askAI() {
+        const input = document.getElementById('userInput');
+        const btn = document.getElementById('sendBtn');
+        const respDiv = document.getElementById('response');
+        
+        if (!input.value.trim()) {
+            alert("請寫點東西吧！");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "AI 正在傾聽...";
+        respDiv.style.display = "block";
+        respDiv.innerText = "（正在溫柔地思考回覆...）";
+
+        try {
+            const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 60 字內，並使用繁體中文：" + input.value }] }]
+                })
+            });
+
+            const data = await response.json();
             
-            if (!input.value.trim()) {
-                alert("請寫點東西吧！");
-                return;
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                respDiv.innerText = data.candidates[0].content.parts[0].text;
+                input.value = ""; 
+            } else {
+                respDiv.innerText = "樹洞暫時收不到訊號，可能是 Key 的權限問題。";
             }
-
-            btn.disabled = true;
-            btn.innerText = "AI 正在傾聽...";
-                    try {
-            // 先不問 Google，直接讓網頁回話測試
-            setTimeout(() => {
-                respDiv.innerText = "✨ 測試成功！這代表你的按鈕跟網頁都沒問題，純粹是 API Key 還沒生效喔！";
-                input.value = "";
-                btn.disabled = false;
-                btn.innerText = "再傳送一段話 ✨";
-            }, 1000);
+        } catch (error) {
+            respDiv.innerText = "連線失敗，請稍後再試。";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "再傳送一段話 ✨";
         }
-                    input.value = ""; 
-                } else {
-                    respDiv.innerText = "樹洞暫時收不到訊號，請檢查 Key 是否正確。";
-                }
-            } catch (error) {
-                respDiv.innerText = "連線失敗了，請稍後再試。";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "再傳送一段話 ✨";
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
