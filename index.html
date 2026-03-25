@@ -1,65 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI 情感樹洞 🌸</title>
-    <style>
-        body { 
-            margin: 0; padding: 20px; min-height: 100vh;
-            background: linear-gradient(135deg, #fff5f5 0%, #ffd1dc 100%); 
-            font-family: -apple-system, sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .container {
-            width: 90%; max-width: 450px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 30px; border: 1px solid white;
-            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3);
-            text-align: center;
-        }
-        h1 { color: #ff8fab; font-size: 1.6rem; margin-bottom: 20px; }
-        textarea {
-            width: 100%; height: 120px; border: 2px solid #ffd1dc;
-            border-radius: 15px; padding: 15px; font-size: 1rem;
-            margin-bottom: 15px; outline: none; box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.5); color: #8b5e66; resize: none;
-        }
-        button {
-            background: #ff8fab; color: white; border: none;
-            padding: 12px 30px; border-radius: 25px; font-weight: bold;
-            cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
-        }
-        button:disabled { background: #ffc2d1; cursor: not-allowed; }
-        #response {
-            margin-top: 25px; padding: 15px; border-radius: 15px;
-            background: white; color: #8b5e66; text-align: left;
-            font-size: 0.95rem; line-height: 1.6; display: none;
-            border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            white-space: pre-wrap;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>🌸 匿名 AI 樹洞</h1>
-        <p style="color: #8b5e66; font-size: 0.9rem; margin-bottom: 15px;">寫下心事，AI 會在這裡陪著你。</p>
-        <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
-        <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
-        <div id="response"></div>
-    </div>
-
-    <script>
-    // 固定的 API Key
-    const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs"; 
-
     async function askAI() {
         const input = document.getElementById('userInput');
         const btn = document.getElementById('sendBtn');
         const respDiv = document.getElementById('response');
         const userText = input.value.trim();
         
+        // 你的正確 Key
+        const API_KEY = "AIzaSyBf9OWj5n9NGQupxod9dwJ5Lx_kJ-IO1rs"; 
+
         if (!userText) { alert("請寫點東西吧！"); return; }
 
         btn.disabled = true;
@@ -68,34 +15,34 @@
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            // 使用最新的 Flash 模型路徑
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // 【關鍵修正】使用 v1 正式版路徑，這專門給 Tier 1 帳戶使用
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒、溫暖的話回覆這段情緒，大約 60 字內，並使用繁體中文：" + userText }] }]
+                    contents: [{ 
+                        parts: [{ text: "你是一個溫柔的傾聽者，請用簡短、療癒的話回覆，大約 60 字內，使用繁體中文：" + userText }] 
+                    }]
                 })
             });
 
             const data = await response.json();
             
+            // 判斷回傳結果
             if (data.candidates && data.candidates[0].content) {
                 respDiv.innerText = data.candidates[0].content.parts[0].text;
                 input.value = ""; 
             } else {
-                // 顯示錯誤原因
-                const msg = data.error ? data.error.message : "請確認 API Key 是否已啟用";
-                respDiv.innerText = "樹洞暫時出了點狀況：\n" + msg;
+                // 如果失敗，顯示 Google 給的具體原因
+                const errorDetail = data.error ? data.error.message : "模型暫時無法回應";
+                respDiv.innerText = "樹洞通知：\n" + errorDetail;
             }
         } catch (error) {
-            respDiv.innerText = "連線失敗：" + error.message;
+            respDiv.innerText = "連線失敗，請檢查網路。";
         } finally {
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
         }
     }
-    </script>
-</body>
-</html>
