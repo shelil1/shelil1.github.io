@@ -53,7 +53,15 @@
         const respDiv = document.getElementById('response');
         
         // 妳的正確 API Key
-        const myKey = import.meta.env.VITE_GEMINI_API_KEY;
+// 改成「問密碼」模式，這段不會被 GitHub 警報
+let apiKey = localStorage.getItem("my_ai_key");
+
+if (!apiKey || apiKey.length < 10) {
+    apiKey = prompt("請輸入通關密語 (你的 Google API Key)：");
+    if (apiKey) {
+        localStorage.setItem("my_ai_key", apiKey);
+    }
+}        
         if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
 
         btn.disabled = true;
