@@ -32,7 +32,7 @@
             margin-top: 25px; text-align: left; color: #8b5e66; background: white; 
             padding: 15px; border-radius: 15px; display: none; 
             border-left: 5px solid #ff8fab; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            line-height: 1.6;
+            line-height: 1.6; white-space: pre-wrap;
         }
     </style>
 </head>
@@ -44,24 +44,36 @@
         <textarea id="userInput" placeholder="今天心情還好嗎？"></textarea>
         <button id="sendBtn" onclick="askAI()">傳送給樹洞 ✨</button>
         <div id="response"></div>
+        <button id="resetBtn" onclick="resetKey()" style="margin-top:15px; background:none; color:#8b5e66; font-size:0.7rem; border:none; text-decoration:underline; width:auto;">更換密鑰</button>
     </div>
 
     <script>
+    // 1. 初始化金鑰
+    function getApiKey() {
+        let key = localStorage.getItem("my_ai_key");
+        if (!key || key.length < 10) {
+            key = prompt("請輸入通關密語 (你的 Google API Key)：");
+            if (key) {
+                localStorage.setItem("my_ai_key", key);
+            }
+        }
+        return key;
+    }
+
+    function resetKey() {
+        localStorage.removeItem("my_ai_key");
+        alert("已清除密鑰，請重新整理網頁。");
+        location.reload();
+    }
+
     async function askAI() {
         const input = document.getElementById('userInput');
         const btn = document.getElementById('sendBtn');
         const respDiv = document.getElementById('response');
         
-        // 妳的正確 API Key
-// 改成「問密碼」模式，這段不會被 GitHub 警報
-let apiKey = localStorage.getItem("my_ai_key");
-
-if (!apiKey || apiKey.length < 10) {
-    apiKey = prompt("請輸入通關密語 (你的 Google API Key)：");
-    if (apiKey) {
-        localStorage.setItem("my_ai_key", apiKey);
-    }
-}        
+        // 取得金鑰
+        const currentKey = getApiKey();
+        if (!currentKey) { alert("沒有密鑰無法使用喔！"); return; }
         if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
 
         btn.disabled = true;
@@ -70,8 +82,8 @@ if (!apiKey || apiKey.length < 10) {
         respDiv.innerText = "（正在溫柔地思考回覆...）";
 
         try {
-            // 【核心修正】使用 v1 正式版路徑，確保支援 gemini-1.5-flash
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // 使用正確的金鑰變數 currentKey
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -89,12 +101,11 @@ if (!apiKey || apiKey.length < 10) {
                 respDiv.innerText = data.candidates[0].content.parts[0].text;
                 input.value = ""; 
             } else {
-                // 如果失敗，抓出 Google 給的詳細錯誤代碼
-                const errorInfo = data.error ? (data.error.status + ": " + data.error.message) : "模型暫時無法回應";
-                respDiv.innerText = "樹洞通知：\n" + errorInfo;
+                const errorInfo = data.error ? (data.error.message) : "密鑰可能錯誤，請點下方更換密鑰重試。";
+                respDiv.innerText = "樹洞提醒：\n" + errorInfo;
             }
         } catch (error) {
-            respDiv.innerText = "連線失敗，請檢查網路。";
+            respDiv.innerText = "連線失敗，請檢查網路或金鑰是否正確。";
         } finally {
             btn.disabled = false;
             btn.innerText = "再傳送一段話 ✨";
