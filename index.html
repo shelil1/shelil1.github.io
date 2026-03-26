@@ -53,7 +53,7 @@
         const respDiv = document.getElementById('response');
         
         // 妳的正確 API Key
-        const myKey = process.env.GOOGLE_API_KEY;
+        const myKey = import.meta.env.VITE_GEMINI_API_KEY;
         if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
 
         btn.disabled = true;
