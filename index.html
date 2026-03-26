@@ -53,8 +53,7 @@
         const respDiv = document.getElementById('response');
         
         // 妳的正確 API Key
-        const API_KEY = "AIzaSyBGcNhPo_ZkNCvcFIQPBuu45RpSGWpCscI";
-
+        const myKey = process.env.GOOGLE_API_KEY;
         if (!input.value.trim()) { alert("請寫點東西吧！"); return; }
 
         btn.disabled = true;
